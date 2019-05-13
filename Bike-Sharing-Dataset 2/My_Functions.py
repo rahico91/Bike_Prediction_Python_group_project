@@ -4,6 +4,7 @@ import seaborn as sns
 import warnings
 
 import dask.dataframe as dd
+import dask.array as da
 
 
 from collections import defaultdict
@@ -150,7 +151,7 @@ def relative_values(dataset, columns):
         std7 = true.rolling(min_periods=1,window=24*7).std().shift()
         name = 'relative_' + i 
         dataset[name]= (true - avg7)/std7
-    dataset = dataset.replace([np.inf, -np.inf], np.nan).dropna()
+    dataset = dataset.replace([da.inf, -da.inf], da.nan).dropna()
     return dataset 
         
 def check_skewness(df, numerical_cols, p_threshold=(0.75)):
