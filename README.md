@@ -1,10 +1,11 @@
-# Python_group_project
+# Advanced_Python_Individual
 
 Washington DC Biking data
 
-
 ## Libraries
 
+- dask
+- dask ml
 - seaborn
 - gplearn
 - pep8

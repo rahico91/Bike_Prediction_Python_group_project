@@ -3,9 +3,10 @@ import pandas as pd
 import seaborn as sns
 import warnings
 
+import dask
 import dask.dataframe as dd
 import dask.array as da
-
+from dask import delayed
 
 from collections import defaultdict
 
@@ -142,6 +143,7 @@ def Genetic_P(dataset,target):
 
 ## Creating a new variable that compares the value to the past 7 days 
 ## the first 5 rows will be dropped if 'windspeed'is calculated and only 2 for the rest 
+
 def relative_values(dataset, columns):
     dataset = dataset.copy()
     max = {'temp':41,'atemp':50,'hum':100,'windspeed':67}
@@ -151,7 +153,7 @@ def relative_values(dataset, columns):
         std7 = true.rolling(min_periods=1,window=24*7).std().shift()
         name = 'relative_' + i 
         dataset[name]= (true - avg7)/std7
-    dataset = dataset.replace([da.inf, -da.inf], da.nan).dropna()
+    dataset = dataset.replace([np.inf, -np.inf], np.nan).dropna()
     return dataset 
         
 def check_skewness(df, numerical_cols, p_threshold=(0.75)):
@@ -187,6 +189,7 @@ def isDaylight(row):
     row['isNoon'] = 1 if row['hr'] == sun['noon'].hour else 0
     return row
 
+@delayed
 def addRushHourFlags(row):
     #weekend
     if row['workingday'] == 0 :
