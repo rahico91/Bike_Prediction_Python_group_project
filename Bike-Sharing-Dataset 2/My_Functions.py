@@ -7,7 +7,16 @@ import dask
 import dask.dataframe as dd
 import dask.array as da
 from dask import delayed
+import graphviz
 
+'''dask_ml.preprocessing contains some of the functions from sklearn like RobustScalar, StandardScalar, LabelEncoder, OneHotEncoder, PolynomialFeatures etc., and some of its own such as Categorizer, DummyEncoder, OrdinalEncoder etc'''
+
+#from dask_ml.preprocessing import StandardScalar, LabelEncoder, OneHotEncoder, PolynomialFeatures
+
+from dask_ml.datasets import make_regression
+from dask_ml.model_selection import train_test_split, GridSearchCV
+
+'''-------------------------------------------------------------------------------------------------------------------------'''
 from collections import defaultdict
 
 from sklearn import preprocessing
