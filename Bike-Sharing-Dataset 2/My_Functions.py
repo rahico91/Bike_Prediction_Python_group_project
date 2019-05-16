@@ -4,6 +4,7 @@ import seaborn as sns
 import warnings
 
 import dask
+from dask.distributed import Client, progress
 import dask.dataframe as dd
 import dask.array as da
 from dask import delayed
@@ -11,69 +12,72 @@ import graphviz
 
 '''dask_ml.preprocessing contains some of the functions from sklearn like RobustScalar, StandardScalar, LabelEncoder, OneHotEncoder, PolynomialFeatures etc., and some of its own such as Categorizer, DummyEncoder, OrdinalEncoder etc'''
 
-#from dask_ml.preprocessing import StandardScalar, LabelEncoder, OneHotEncoder, PolynomialFeatures
-
+from dask_ml.preprocessing import Categorizer, DummyEncoder, MinMaxScaler
 from dask_ml.datasets import make_regression
 from dask_ml.model_selection import train_test_split, GridSearchCV
+from dask_ml.metrics import r2_score
+
+from dask_ml.linear_model import LinearRegression
+from dask_glm.datasets import make_regression
 
 '''-------------------------------------------------------------------------------------------------------------------------'''
 from collections import defaultdict
 
-from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error, r2_score,roc_curve
-from sklearn.model_selection import train_test_split, KFold,StratifiedKFold
-from sklearn.model_selection import cross_val_score, cross_val_predict,validation_curve
-from sklearn.ensemble import RandomForestRegressor
+# from sklearn import preprocessing
+# from sklearn.metrics import mean_squared_error, r2_score,roc_curve
+# from sklearn.model_selection import train_test_split, KFold,StratifiedKFold
+# from sklearn.model_selection import cross_val_score, cross_val_predict,validation_curve
+# from sklearn.ensemble import RandomForestRegressor
 
 
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import LabelBinarizer, RobustScaler,PolynomialFeatures
-from sklearn.neighbors import KNeighborsRegressor
-from scipy import stats
-from scipy.stats import skew, boxcox_normmax
-from scipy.special import boxcox1p
+# from sklearn.preprocessing import LabelBinarizer, RobustScaler,PolynomialFeatures
+# from sklearn.neighbors import KNeighborsRegressor
+# from scipy import stats
+# from scipy.stats import skew, boxcox_normmax
+# from scipy.special import boxcox1p
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator , MultipleLocator
 from gplearn.genetic import SymbolicRegressor
 
-from sklearn import metrics
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder, LabelBinarizer,MinMaxScaler
-from sklearn.pipeline import make_pipeline
-from sklearn.feature_selection import RFE, RFECV
-from sklearn.linear_model import LogisticRegression,LinearRegression, OrthogonalMatchingPursuit
-from sklearn.model_selection import train_test_split , TimeSeriesSplit, GridSearchCV
-from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.metrics import roc_auc_score, roc_curve, accuracy_score
+# from sklearn import metrics
+# from sklearn.preprocessing import OneHotEncoder, LabelEncoder, LabelBinarizer,MinMaxScaler
+# from sklearn.pipeline import make_pipeline
+# from sklearn.feature_selection import RFE, RFECV
+# from sklearn.linear_model import LogisticRegression,LinearRegression, OrthogonalMatchingPursuit
+# from sklearn.model_selection import train_test_split , TimeSeriesSplit, GridSearchCV
+from sklearn.model_selection import TimeSeriesSplit
+# from sklearn.metrics import confusion_matrix, classification_report
+# from sklearn.metrics import roc_auc_score, roc_curve, accuracy_score
 from matplotlib.gridspec import GridSpec
 import plotly.tools as tls
 import plotly
 import plotly.plotly as py
-from sklearn.decomposition import PCA
+# from sklearn.decomposition import PCA
 from pandas import DataFrame 
-from sklearn.exceptions import ConvergenceWarning
-from gplearn.genetic import SymbolicTransformer
+# from sklearn.exceptions import ConvergenceWarning
+# from gplearn.genetic import SymbolicTransformer
 from scipy.stats import *
 from astral import Astral
 import datetime
 import matplotlib.pyplot as plt
-from sklearn.metrics import explained_variance_score
+# from sklearn.metrics import explained_variance_score
 import warnings
-from sklearn import preprocessing
-from sklearn.metrics import mean_squared_error, r2_score,roc_curve
-from sklearn.model_selection import train_test_split, KFold,StratifiedKFold
-from sklearn.model_selection import cross_val_score, cross_val_predict,validation_curve
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.kernel_ridge import KernelRidge
-from sklearn.svm import SVR
-import xgboost as xgb
-from sklearn.linear_model import SGDRegressor
+# from sklearn import preprocessing
+# from sklearn.metrics import mean_squared_error, r2_score,roc_curve
+# from sklearn.model_selection import train_test_split, KFold,StratifiedKFold
+# from sklearn.model_selection import cross_val_score, cross_val_predict,validation_curve
+# from sklearn.ensemble import RandomForestRegressor
+# from sklearn.kernel_ridge import KernelRidge
+# from sklearn.svm import SVR
+# import xgboost as xgb
+# from sklearn.linear_model import SGDRegressor
 
 plotly.tools.set_credentials_file(username='Furqan92', api_key='22DfVN5rFRg79OYygN5h')
 
-tscv = TimeSeriesSplit(n_splits=5)
-random_seed = 1234
-
+# tscv = TimeSeriesSplit(n_splits=5)
+# random_seed = 1234
 
 ## Reading data 
 def read_data(input_path):
@@ -191,6 +195,7 @@ city_name = 'Washington DC'
 a = Astral()
 a.solar_depression = 'civil'
 city = a[city_name]
+'''Feature Creation Functions'''
 
 def isDaylight(row):
     sun = city.sun(date=row['dteday'], local=True)
@@ -218,11 +223,6 @@ def addRushHourFlags(row):
             row['RushHour-Low'] = 1
     return row
 
-def r2score(x,y):
-    s = explained_variance_score(x,y)
-    return s 
-
-
 ### This function will calculate the mean of the cnt of the previous 2 weeks during the same hour
 def mean_per_hour_3weeks(dataset):
     a = [] 
@@ -231,4 +231,10 @@ def mean_per_hour_3weeks(dataset):
     dataset['mean_per_hour']= a
     dataset= dataset.dropna()
     return dataset
+
+def r2score(x,y):
+    s = explained_variance_score(x,y)
+    return s 
+
+
 
