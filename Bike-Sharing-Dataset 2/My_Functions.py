@@ -47,7 +47,7 @@ from gplearn.genetic import SymbolicRegressor
 # from sklearn.feature_selection import RFE, RFECV
 # from sklearn.linear_model import LogisticRegression,LinearRegression, OrthogonalMatchingPursuit
 # from sklearn.model_selection import train_test_split , TimeSeriesSplit, GridSearchCV
-from sklearn.model_selection import TimeSeriesSplit
+from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
 # from sklearn.metrics import confusion_matrix, classification_report
 # from sklearn.metrics import roc_auc_score, roc_curve, accuracy_score
 from matplotlib.gridspec import GridSpec
@@ -76,8 +76,8 @@ import warnings
 
 plotly.tools.set_credentials_file(username='Furqan92', api_key='22DfVN5rFRg79OYygN5h')
 
-# tscv = TimeSeriesSplit(n_splits=5)
-# random_seed = 1234
+tscv = TimeSeriesSplit(n_splits=5)
+random_seed = 1234
 
 ## Reading data 
 def read_data(input_path):
@@ -196,32 +196,6 @@ a = Astral()
 a.solar_depression = 'civil'
 city = a[city_name]
 '''Feature Creation Functions'''
-
-def isDaylight(row):
-    sun = city.sun(date=row['dteday'], local=True)
-    row['isDaylight'] = 1 if (row['hr'] < sun['sunset'].hour and row['hr'] > sun['sunrise'].hour) else 0
-    row['isNoon'] = 1 if row['hr'] == sun['noon'].hour else 0
-    return row
-
-@delayed
-def addRushHourFlags(row):
-    #weekend
-    if row['workingday'] == 0 :
-        if row['hr'] in [10, 11, 12, 13, 14, 15, 16, 17, 18]:
-            row['RushHour-High'] = 1
-        elif row['hr'] in [8, 9, 19, 20, 21, 22, 23 ,0]:
-            row['RushHour-Med'] = 1
-        else:
-            row['RushHour-Low'] = 1
-    #weekdays
-    if row['workingday'] == 1:
-        if row['hr'] in [7, 8,9, 16, 17, 18, 19, 20]:
-            row['RushHour-High'] = 1
-        elif row['hr'] in [6,  10, 11, 12, 13, 15 ,21 ,22 ,23]:
-            row['RushHour-Med'] = 1
-        else:
-            row['RushHour-Low'] = 1
-    return row
 
 ### This function will calculate the mean of the cnt of the previous 2 weeks during the same hour
 def mean_per_hour_3weeks(dataset):
