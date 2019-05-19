@@ -14,11 +14,23 @@ import graphviz
 
 from dask_ml.preprocessing import Categorizer, DummyEncoder, MinMaxScaler
 from dask_ml.datasets import make_regression
-from dask_ml.model_selection import train_test_split, GridSearchCV
+from dask_ml.model_selection import train_test_split#, GridSearchCV
 from dask_ml.metrics import r2_score
 
 from dask_ml.linear_model import LinearRegression
 from dask_glm.datasets import make_regression
+
+
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.pipeline import make_pipeline
+
+
+#import dask_searchcv as dscv
+from dask_searchcv import GridSearchCV
+
+from sklearn.ensemble import RandomForestRegressor
+import xgboost as xgb
+import dask_xgboost as dxgb
 
 '''-------------------------------------------------------------------------------------------------------------------------'''
 from collections import defaultdict
@@ -39,7 +51,7 @@ from sklearn.pipeline import make_pipeline
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator , MultipleLocator
-from gplearn.genetic import SymbolicRegressor
+#from gplearn.genetic import SymbolicRegressor
 
 # from sklearn import metrics
 # from sklearn.preprocessing import OneHotEncoder, LabelEncoder, LabelBinarizer,MinMaxScaler
@@ -47,7 +59,8 @@ from gplearn.genetic import SymbolicRegressor
 # from sklearn.feature_selection import RFE, RFECV
 # from sklearn.linear_model import LogisticRegression,LinearRegression, OrthogonalMatchingPursuit
 # from sklearn.model_selection import train_test_split , TimeSeriesSplit, GridSearchCV
-from sklearn.model_selection import TimeSeriesSplit, GridSearchCV
+from sklearn.model_selection import TimeSeriesSplit
+#from sklearn.model_selection import GridSearchCV
 # from sklearn.metrics import confusion_matrix, classification_report
 # from sklearn.metrics import roc_auc_score, roc_curve, accuracy_score
 from matplotlib.gridspec import GridSpec
