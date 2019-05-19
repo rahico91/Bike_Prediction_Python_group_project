@@ -1,13 +1,11 @@
 # Advanced_Python_Individual
 
-Washington DC Biking data
+Washington DC Biking data with Dask datagrames
 
 ## Libraries
 
 - dask
 - dask ml
-- seaborn
-- gplearn
 - pep8
 - astral
 - plotly
